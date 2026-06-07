@@ -19,6 +19,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Space+Grotesk:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="styles.css"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Nurse Passport Inc.","url":"https://nursepassport.net/","logo":"https://nursepassport.net/og-image.png","description":"Global nursing credential verification and workforce mobility platform.","slogan":"Verify once. Work anywhere.","email":"Support@nursepassport.net","address":{"@type":"PostalAddress","streetAddress":"221 W 10th Street, 3rd & 4th Floors","addressLocality":"Wilmington","addressRegion":"DE","postalCode":"19801","addressCountry":"US"}}
 </script>
@@ -50,6 +51,7 @@
       <div class="field"><label for="apass">Password</label><input id="apass" type="password" placeholder="••••••••"/></div>
       <button class="btn btn-primary btn-lg" onclick="submitAuth()" id="authBtn">Create my account →</button>
     </div>
+    <div id="authMsg" class="auth-msg" style="display:none"></div>
     <div class="auth-alt" id="authAlt">Already verified? <a href="#" onclick="authMode('signin');return false;">Sign in</a></div>
     <div class="auth-trust">
       <span>🔒 SOC2</span><span>GDPR</span><span>ISO 27001</span><span>48-hr verify</span>
@@ -89,6 +91,16 @@
   </div>
 </div>
 <script>
+/* ── Supabase connection ── */
+const SB_URL='https://ethxlgduizgcmmhbrtev.supabase.co';
+const SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV0aHhsZ2R1aXpnY21taGJydGV2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMTI2OTIsImV4cCI6MjA5NTU4ODY5Mn0.ZBzrm0q2lVKtOoYdepH6LbrWRxRlp5MTpQ0R2uWmZZw';
+const sb = window.supabase.createClient(SB_URL, SB_ANON);
+
+function msg(t,ok){
+  var m=document.getElementById('authMsg'); if(!m) return;
+  m.textContent=t||''; m.style.display=t?'block':'none';
+  m.style.color = ok ? '#10b981' : '#fca5a5';
+}
 function authMode(m){
   var signup=m==='signup';
   document.getElementById('tabSignup').classList.toggle('active',signup);
@@ -98,25 +110,49 @@ function authMode(m){
   document.getElementById('roleField').style.display=signup?'block':'none';
   document.getElementById('authBtn').textContent=signup?'Create my account →':'Sign in →';
   document.getElementById('authAlt').innerHTML=signup?'Already verified? <a href="#" onclick="authMode(\'signin\');return false;">Sign in</a>':'New here? <a href="#" onclick="authMode(\'signup\');return false;">Create an account</a>';
+  msg('');
 }
 function showStep(id){
   ['stepAuth','stepPath','stepDone'].forEach(function(s){document.getElementById(s).classList.toggle('show',s===id);});
   window.scrollTo({top:0,behavior:'smooth'});
 }
-function submitAuth(){
+async function submitAuth(){
   var isNurse=document.getElementById('arole').selectedIndex===0;
   var signingUp=document.getElementById('tabSignup').classList.contains('active');
-  if(signingUp && isNurse){ showStep('stepPath'); }
-  else if(!isNurse){ window.location='verify.html?view=private'; }   // facility → recruiter view
-  else { window.location='verify.html'; }                            // nurse sign-in → passport
+  var email=document.getElementById('aemail').value.trim();
+  var pass=document.getElementById('apass').value;
+  if(!email || !pass){ return msg('Please enter your email and password.'); }
+  var btn=document.getElementById('authBtn'); var label=btn.textContent;
+  btn.disabled=true; btn.textContent='Working…'; msg('');
+  try{
+    if(signingUp){
+      const {error}=await sb.auth.signUp({email:email,password:pass,options:{data:{role:isNurse?'nurse':'facility'}}});
+      if(error) throw error;
+      if(isNurse){ showStep('stepPath'); }
+      else { window.location='verify.html?view=private'; }
+    }else{
+      const {data,error}=await sb.auth.signInWithPassword({email:email,password:pass});
+      if(error) throw error;
+      var role='nurse';
+      try{ const {data:p}=await sb.from('profiles').select('role').eq('id',data.user.id).single(); if(p&&p.role) role=p.role; }catch(e){}
+      window.location = role==='facility' ? 'verify.html?view=private' : 'verify.html';
+    }
+  }catch(e){
+    msg(e.message || 'Something went wrong. Please try again.');
+    btn.disabled=false; btn.textContent=label;
+  }
 }
-function choosePath(p){
+async function choosePath(p){
   document.getElementById('doneTitle').textContent =
     p==='home' ? "You're set to Stay Home" : p==='global' ? "You're set to Go Global" : "We'll show you both";
   document.getElementById('doneSub').textContent =
     p==='home' ? "We'll tailor domestic corridors and handle license endorsement for you. You can switch to Go Global anytime."
     : p==='global' ? "We'll open every international corridor you qualify for. You can switch to Stay Home anytime."
     : "We'll show you both domestic and international corridors so you can compare.";
+  try{
+    const {data:{user}} = await sb.auth.getUser();
+    if(user){ await sb.from('profiles').update({path:p}).eq('id',user.id); }
+  }catch(e){}
   showStep('stepDone');
 }
 if(location.hash==='#facility'){var s=document.getElementById('arole');if(s)s.selectedIndex=1;}

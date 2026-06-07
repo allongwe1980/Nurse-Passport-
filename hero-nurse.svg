@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 1000" width="760" height="1000" role="img" aria-label="Illustration of a nurse in a white uniform">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="42%" r="58%">
+      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.30"/>
+      <stop offset="45%" stop-color="#0891b2" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#0B1929" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="uniform" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#dde6ee"/>
+    </linearGradient>
+    <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e6b495"/>
+      <stop offset="1" stop-color="#d49e7c"/>
+    </linearGradient>
+    <linearGradient id="steth" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#34dcf2"/>
+      <stop offset="1" stop-color="#0891b2"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ambient glow -->
+  <ellipse cx="400" cy="430" rx="360" ry="430" fill="url(#glow)"/>
+
+  <!-- hair (back) -->
+  <path d="M268 320 C 268 180 492 180 492 320 C 510 470 470 540 380 540 C 290 540 250 470 268 320 Z" fill="#26262e"/>
+
+  <!-- neck -->
+  <rect x="344" y="372" width="72" height="96" rx="30" fill="url(#skin)"/>
+  <path d="M344 408 C 360 440 400 440 416 408 L 416 452 C 392 470 368 470 344 452 Z" fill="#c68f6f" opacity="0.55"/>
+
+  <!-- shoulders / uniform body -->
+  <path d="M214 560
+           C 214 486 300 446 380 446
+           C 460 446 546 486 546 560
+           L 580 1000 L 180 1000 Z" fill="url(#uniform)"/>
+  <!-- sleeves -->
+  <ellipse cx="232" cy="556" rx="60" ry="78" fill="url(#uniform)"/>
+  <ellipse cx="528" cy="556" rx="60" ry="78" fill="url(#uniform)"/>
+  <!-- arms -->
+  <path d="M214 600 C 196 720 214 860 244 1000 L 318 1000 C 300 860 300 720 300 640 Z" fill="url(#skin)"/>
+  <path d="M546 600 C 564 720 546 860 516 1000 L 442 1000 C 460 860 460 720 460 640 Z" fill="url(#skin)"/>
+  <!-- fold shading -->
+  <path d="M380 470 L 372 1000 L 392 1000 Z" fill="#c3ced9" opacity="0.5"/>
+
+  <!-- V-neck collar -->
+  <path d="M330 470 L 380 560 L 430 470 C 410 458 392 452 380 452 C 368 452 350 458 330 470 Z" fill="#eef3f8"/>
+  <path d="M330 470 L 380 560 L 430 470" fill="none" stroke="#cdd8e2" stroke-width="3"/>
+
+  <!-- ID badge -->
+  <rect x="278" y="600" width="58" height="80" rx="9" fill="#ffffff" stroke="#cdd8e2" stroke-width="2"/>
+  <rect x="278" y="600" width="58" height="20" rx="9" fill="url(#steth)"/>
+  <circle cx="307" cy="648" r="13" fill="#e6eef5"/>
+
+  <!-- stethoscope -->
+  <g fill="none" stroke="url(#steth)" stroke-width="11" stroke-linecap="round">
+    <path d="M338 472 C 322 540 332 600 372 636"/>
+    <path d="M432 472 C 452 548 452 612 428 660"/>
+  </g>
+  <circle cx="424" cy="678" r="26" fill="url(#steth)"/>
+  <circle cx="424" cy="678" r="13" fill="#0b3a45"/>
+
+  <!-- ears -->
+  <ellipse cx="290" cy="330" rx="16" ry="24" fill="url(#skin)"/>
+  <ellipse cx="470" cy="330" rx="16" ry="24" fill="url(#skin)"/>
+
+  <!-- head -->
+  <ellipse cx="380" cy="322" rx="98" ry="112" fill="url(#skin)"/>
+
+  <!-- hair (front sweep) -->
+  <path d="M282 318 C 280 214 480 214 478 318 C 470 286 452 268 420 262 C 446 286 452 306 450 322 C 430 286 396 276 380 276 C 360 276 326 290 312 326 C 308 300 318 280 342 264 C 306 272 290 290 282 318 Z" fill="#26262e"/>
+
+  <!-- face -->
+  <g fill="#3a2f2a">
+    <ellipse cx="350" cy="330" rx="6.5" ry="8.5"/>
+    <ellipse cx="410" cy="330" rx="6.5" ry="8.5"/>
+  </g>
+  <g fill="none" stroke="#3a2f2a" stroke-width="3.4" stroke-linecap="round">
+    <path d="M338 312 C 344 306 356 306 362 310"/>
+    <path d="M398 310 C 404 306 416 306 422 312"/>
+  </g>
+  <path d="M378 332 C 374 346 372 354 380 358" fill="none" stroke="#c68f6f" stroke-width="3" stroke-linecap="round"/>
+  <path d="M360 374 C 372 386 388 386 400 374" fill="none" stroke="#b9745a" stroke-width="3.6" stroke-linecap="round"/>
+  <ellipse cx="338" cy="352" rx="11" ry="7" fill="#e89281" opacity="0.25"/>
+  <ellipse cx="422" cy="352" rx="11" ry="7" fill="#e89281" opacity="0.25"/>
+
+  <!-- nurse cap -->
+  <path d="M300 250 C 318 214 442 214 460 250 L 452 262 C 430 240 330 240 308 262 Z" fill="#ffffff" stroke="#d3dde6" stroke-width="2"/>
+  <rect x="372" y="226" width="16" height="34" rx="2" fill="#0891b2"/>
+  <rect x="363" y="235" width="34" height="16" rx="2" fill="#0891b2"/>
+</svg>

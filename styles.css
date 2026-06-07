@@ -311,7 +311,7 @@ footer{
   .mobile-menu.open{display:flex}
   nav{padding:10px 4%}
   .nav-right{gap:14px}
-  .hero{padding-top:104px;justify-content:flex-start}
+  .hero{padding-top:104px;padding-bottom:36px;justify-content:flex-start;min-height:auto}
   h1{letter-spacing:-.5px}
   .hero-figure{top:46px;bottom:auto;right:-4%;width:76%;max-width:none;height:64vh;background-position:top right;background-size:contain;opacity:.16}
   .hero::after{background:

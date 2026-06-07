@@ -161,6 +161,122 @@
   </div>
 </footer>
 
-<script src="site.js"></script>
+<script>
+document.documentElement.classList.add('js');
+function toggleMenu(){
+  const m=document.getElementById('mobileMenu');
+  const h=document.getElementById('ham');
+  const open=m.classList.toggle('open');
+  h.setAttribute('aria-expanded',open?'true':'false');
+  h.setAttribute('aria-label',open?'Close menu':'Open menu');
+  h.style.gap=open?'0':'5px';
+  const spans=h.querySelectorAll('span');
+  if(open){
+    spans[0].style.transform='rotate(45deg) translate(5px,5px)';
+    spans[1].style.opacity='0';
+    spans[2].style.transform='rotate(-45deg) translate(5px,-5px)';
+  } else {
+    spans.forEach(s=>{s.style.transform='';s.style.opacity='';});
+  }
+}
+// Close menu on outside click
+document.addEventListener('click',function(e){
+  const menu=document.getElementById('mobileMenu');
+  const ham=document.getElementById('ham');
+  if(menu.classList.contains('open') && !menu.contains(e.target) && !ham.contains(e.target)){
+    toggleMenu();
+  }
+});
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',function(e){
+    const target=document.querySelector(this.getAttribute('href'));
+    if(target){e.preventDefault();target.scrollIntoView({behavior:'smooth',block:'start'});}
+  });
+});
+// Nav scroll effect
+window.addEventListener('scroll',function(){
+  const nav=document.querySelector('nav');
+  nav.style.background=window.scrollY>20?'rgba(11,25,41,.97)':'rgba(11,25,41,.92)';
+});
+
+// ── FAQ accordion ──
+function toggleFaq(btn){
+  const item=btn.closest('.faq-item');
+  const ans=item.querySelector('.faq-a');
+  const open=item.classList.toggle('open');
+  btn.setAttribute('aria-expanded',open?'true':'false');
+  ans.style.maxHeight=open?ans.scrollHeight+'px':'0';
+}
+
+// ── Animated stat counters ──
+function animateCount(el){
+  const raw=el.dataset.target;
+  const num=parseFloat(raw.replace(/[^0-9.]/g,''));
+  const suffix=raw.replace(/[0-9.,]/g,'');
+  const hasPlus=/\+/.test(raw);
+  if(isNaN(num)){el.textContent=raw;return;}
+  const dur=1400,start=performance.now();
+  function tick(now){
+    const p=Math.min((now-start)/dur,1);
+    const eased=1-Math.pow(1-p,3);
+    const val=Math.round(num*eased);
+    el.textContent=val.toLocaleString()+suffix.replace('+','')+(hasPlus?'+':'');
+    if(p<1)requestAnimationFrame(tick);else el.textContent=raw;
+  }
+  requestAnimationFrame(tick);
+}
+
+// ── Tag elements for reveal + prep counters ──
+(function(){
+  const groups=[
+    ['.section-tag',0],['h2',0],['.section-sub',0],
+    ['.step-card',1],['.facility-card',1],['.corridor-pill',1],
+    ['.testimonial-card',0],['.faq-item',1],['.journey-preview',0],['.cta-pair',0]
+  ];
+  groups.forEach(([sel,stagger])=>{
+    document.querySelectorAll(sel).forEach((el,i)=>{
+      el.classList.add('reveal');
+      if(stagger)el.setAttribute('data-d',(i%4)+1);
+    });
+  });
+  // prep stat values
+  document.querySelectorAll('.stat-val').forEach(el=>{el.dataset.target=el.textContent;});
+})();
+
+// ── IntersectionObserver: reveals, counters, salary bars ──
+const reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+if('IntersectionObserver'in window && !reduce){
+  const io=new IntersectionObserver((entries,obs)=>{
+    entries.forEach(e=>{
+      if(!e.isIntersecting)return;
+      const el=e.target;
+      el.classList.add('in');
+      if(el.classList.contains('stats-strip')||el.classList.contains('hero-stats')){
+        el.querySelectorAll('.stat-val').forEach(animateCount);
+      }
+      obs.unobserve(el);
+    });
+  },{threshold:0,rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.reveal,.salary-row,.stats-strip,.hero-stats').forEach(el=>io.observe(el));
+  // safety net: reveal everything after 1.5s no matter what
+  setTimeout(function(){document.querySelectorAll('.reveal,.salary-row').forEach(el=>el.classList.add('in'));},1500);
+}else{
+  document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
+  document.querySelectorAll('.salary-row').forEach(el=>el.classList.add('in'));
+}
+
+// ── Corridor toggle: Domestic / Global (scoped per section) ──
+function switchCorridors(mode,btn){
+  const scope=btn.closest('section')||document;
+  scope.querySelectorAll('.seg button').forEach(b=>b.classList.toggle('active',b===btn));
+  scope.querySelectorAll('.corr-group').forEach(g=>{
+    const on=g.dataset.mode===mode;
+    g.classList.toggle('show',on);
+    if(on)g.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
+  });
+}
+
+</script>
 </body>
 </html>
